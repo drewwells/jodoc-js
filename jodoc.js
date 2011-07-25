@@ -10,45 +10,62 @@ var sys = require('sys'),
 
 //Return an options struct, with files
 function getOptions() {
+
     var args = process.argv.slice(2),
+        config,
         arg = '',
         options = {
             files: []
-        };
+        }; 
 
-    while(args.length > 0) {
-        arg = args.shift();
-        switch(arg)
-        {
-        case '--server':
-        case '-s': options.server = true;
-            //Allow port to be passed optionally
-            if( !isNaN( args[0] ) ){
-                options.server = args.shift();
+    if( args.length === 1 ){
+
+        try{
+
+            config = require( process.argv[2] );
+            return config;
+        } catch ( err ){
+
+            sys.puts( "Configuration module not found or failed to load, is it a value CommonJS module?" );
+        }
+
+    } else {
+
+        while(args.length > 0) {
+            arg = args.shift();
+            switch(arg)
+            {
+            case '--server':
+            case '-s': options.server = true;
+                //Allow port to be passed optionally
+                if( !isNaN( args[0] ) ){
+                    options.server = args.shift();
+                }
+                break;
+
+            case '--output':
+            case '-o': options.output = args.shift();
+                break;
+
+            case '--template': options.template = args.shift();
+                break;
+
+            case '--toc': options.toc = args.shift();
+                break;
+
+            case '-t':
+            case '--title': options.title = args.shift();
+                break;
+
+            case '-ni':
+            case '--no-index': options.noindex = true;
+                break;
+
+            default: options.files.push(arg);
             }
-            break;
-
-        case '--output':
-        case '-o': options.output = args.shift();
-            break;
-
-        case '--template': options.template = args.shift();
-            break;
-
-        case '--toc': options.toc = args.shift();
-            break;
-
-        case '-t':
-        case '--title': options.title = args.shift();
-            break;
-
-        case '-ni':
-        case '--no-index': options.noindex = true;
-            break;
-
-        default: options.files.push(arg);
         }
     }
+
     return options;
 }
 

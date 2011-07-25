@@ -1,0 +1,14 @@
+module.exports = {
+    toc:      'doc/toc.mdown',
+    title:    'joDoc',
+    template: 'doc/template.html',
+    output:   'dist/doc',
+    server:   true,
+    files: [
+    //Order here decides the order which it appears in the non-output directory form
+        'doc/main.mdown',
+        'doc/styleguide.mdown',
+        'src/core.js',
+        'src/utility.js',
+    ]
+};
