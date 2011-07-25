@@ -183,7 +183,8 @@ function readFileContent( files, output, toc ){
             //Send any files that the user requests
             if( filePath !== './' ){
 
-                filePath = options.output + filePath;
+                filePath = path.join( options.output, filePath );
+                console.log( filePath );
                 path.exists(filePath, function(exists) {
 
 	            if( exists ){
