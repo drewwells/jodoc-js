@@ -3,7 +3,8 @@
 var fs = require('fs'),
     path = require('path'),
     jodoc = require(__dirname + '/lib/jodoc-lib.js'),
-    markdown = require(__dirname + '/lib/showdown.js').showdown;
+    markdown = require(__dirname + '/lib/showdown.js').showdown,
+    prefix = process.cwd();
 
 var sys = require('sys'),
     http = require('http');
@@ -12,7 +13,7 @@ var sys = require('sys'),
 function getOptions() {
 
     var args = process.argv.slice(2),
-        config,
+        configFile = process.argv[2],
         arg = '',
         options = {
             files: []
@@ -21,12 +22,16 @@ function getOptions() {
     if( args.length === 1 ){
 
         try{
+            if( configFile[0] !== '/' ){
 
-            config = require( process.argv[2] );
-            return config;
+                configFile = path.resolve( prefix, configFile );
+            }
+
+            return require( configFile );
         } catch ( err ){
 
             sys.puts( "Configuration module not found or failed to load, is it a value CommonJS module?" );
+            throw "Error";
         }
 
     } else {
@@ -161,11 +166,11 @@ function readFileContent( files, output, toc ){
 (function( ) {
 
     var options = getOptions(), //Parse command line arguments
-        files = options.files,
+        files = options.files || [],
         content;
 
     // if no files given, glob the current directory
-    if (!files.length) {
+    if ( !files.length) {
         files.push('.');
     }
 
@@ -184,7 +189,7 @@ function readFileContent( files, output, toc ){
             if( filePath !== './' ){
 
                 filePath = path.join( options.output, filePath );
-                console.log( filePath );
+
                 path.exists(filePath, function(exists) {
 
 	            if( exists ){
