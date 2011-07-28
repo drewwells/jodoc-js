@@ -109,8 +109,8 @@ function main() {
     }
     files = files.map(function(file){ file.name = jodoc.munge_filename(file.name); return file; });
     var h1stuff = jodoc.h1finder(files);
-    var linked_files = jodoc.autolink(files,h1stuff.h1s,options.output);
-    var index = jodoc.indexer(h1stuff.h1s, options.output);
+    var linked_files = jodoc.autolink(files,h1stuff.index,options.output);
+    var index = jodoc.indexer( h1stuff, options.output);
     var template;
     if (options.template) {
         template = fs.readFileSync(options.template,"utf8").toString();
