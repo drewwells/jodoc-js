@@ -296,10 +296,11 @@ function writeToDisk( files, output, template, noindex, title ){
         template = fs.readFileSync( template, "utf8" ).toString();
     }
 
-    if( !noindex ){
-        i = indexOfName( linked_files, '_index.html' );
-        if( ~i ){ //Previous index not found
+    if( noindex == null ){
 
+        i = indexOfName( linked_files, '_index.html' );
+        if( !~i ){ //Previous index not found
+            
             linked_files.push({
                 name:"_index.html",
                 content:index
@@ -324,6 +325,7 @@ function writeToDisk( files, output, template, noindex, title ){
         linked_files.forEach(function( lf ){
 
             var out = jodoc.html_header( lf.content, title, template );
+
             fs.writeFile( path.join( output, lf.name ), out, 'utf8', failfast );
         });
 
