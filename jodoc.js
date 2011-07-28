@@ -9,6 +9,32 @@ var fs = require('fs'),
 var sys = require('sys'),
     http = require('http');
 
+var types = {
+    css  : "text/css",
+    htm  : "text/html",
+    html : "text/html",
+    gif  : "image/gif",
+    png  : "image/png",
+    js   : "application/javascript",
+    json : "application/json"
+};
+
+function extension( filePath ){
+
+    if( filePath.lastIndexOf( '.' ) ){
+
+        return filePath.substr( filePath.lastIndexOf( '.' ) + 1 );      
+    } else {
+
+        return '';
+    }
+}
+
+function contentType( filePath ){
+    var ext = extension( filePath );
+    return types[ extension( filePath ) ] ? types [ extension( filePath ) ] : 'application/octet-stream';
+}
+
 //Return an options struct, with files
 function getOptions() {
 
@@ -199,7 +225,11 @@ function readFileContent( files, output, toc ){
 	                        response.end();
 	                    }
 	                    else {
-	                        response.writeHead(200);//, { 'Content-Type': 'text/html' });
+	                        response.writeHead(
+                                    200, 
+                                    { 'Content-Type': contentType( filePath ),
+                                      'Content-Length': content.length
+                                    });
 	                        response.end( content, 'binary' );
 	                    }
 	                });
