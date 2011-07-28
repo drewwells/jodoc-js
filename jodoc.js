@@ -168,7 +168,7 @@ function readFileContent( files, output, toc ){
         });
 
     // toclink the incoming files
-    if( output && toc ){
+    if( toc ){
 
         toc = fs.readFileSync( toc, "utf8" ).toString().split("\n");
         //Insert content as first thing in the result
@@ -243,10 +243,9 @@ function readFileContent( files, output, toc ){
             } else { //Rebuild the jodoc and send it
 
                 content = readFileContent( files, options.output, options.toc );
-
                 linked_files = jodoc.autolink( content,
                                                jodoc.h1finder( content ).h1s,
-                                               options.output
+                                               false//options.output
                                              );
 
                 content = linked_files.map(function( lf ){
@@ -256,9 +255,9 @@ function readFileContent( files, output, toc ){
 
                 response.writeHead( 200, { "Content-Type": "text/html" });
 
-
                 response.end(
-                    jodoc.html_header( content, options.title,
+                    jodoc.html_header( content, 
+                                       options.title,
                                        options.template ?
                                        fs.readFileSync( options.template, "utf8" ).toString() :
                                        undefined )
