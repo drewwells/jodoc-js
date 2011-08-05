@@ -47,17 +47,18 @@ function getOptions() {
 
     if( args.length === 1 ){
 
-        try{
-            if( configFile[0] !== '/' ){
+        if( configFile[0] !== '/' ){
 
-                configFile = path.resolve( prefix, configFile );
-            }
+            configFile = path.resolve( prefix, configFile );
+        }
+
+        if( require ){
 
             return require( configFile );
-        } catch ( err ){
+        } else {
 
-            sys.puts( "Configuration module not found or failed to load, is it a value CommonJS module?" );
-            throw "Error";
+            sys.puts("Your version of NodeJS does not support require(), are you using Node v0.3.7+?");
+            return;
         }
 
     } else {
