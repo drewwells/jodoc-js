@@ -117,27 +117,35 @@ function flatten_files(infiles) {
         outfiles = [];
 
     infiles = infiles.filter(no_vcs);
-    infiles.forEach(function(file) {
-        stat = fs.statSync(file);
-        if (stat.isDirectory()) {
-            // make sure readdir puts path back in after
-            var newfiles = fs.readdirSync(file).map(function(f){
-                return path.join(file,f);
-            });
-            // recurse
-            var flat = flatten_files(newfiles);
-            // add the flattened bits back in
-            outfiles = outfiles.concat(flat);
-        }
-        /*
-         * I assume it is a regular file here
-         * Don't do a stupid and run jodoc on a block device or socket
-         * You're gonna have a bad time
-         */
-        else {
-            outfiles.push( file );
-        }
-    });
+    infiles.filter(no_vcs)
+        .forEach(function(file) {
+            try{
+                stat = fs.statSync( file );
+                if (stat.isDirectory()) {
+
+                    // make sure readdir puts path back in after
+                    var newfiles = fs.readdirSync(file).map(function(f){
+                        if( /.+[^~]$/.test( f ) ){
+                            return path.join(file,f);
+                        }
+                    });
+
+                    // recurse
+                    var flat = flatten_files(newfiles);
+                    // add the flattened bits back in
+                    outfiles = outfiles.concat(flat);
+                }
+                /*
+                 * I assume it is a regular file here
+                 * Don't do a stupid and run jodoc on a block device or socket
+                 * You're gonna have a bad time
+                 */
+                else if( stat.isFile() ){
+
+                    outfiles.push( file );
+                }
+            } catch( err ) {}
+        });
     return outfiles;
 }
 
