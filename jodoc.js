@@ -128,6 +128,7 @@ function flatten_files(infiles) {
                         if( /.+[^~]$/.test( f ) ){
                             return path.join(file,f);
                         }
+                        return undefined;
                     });
 
                     // recurse
@@ -146,6 +147,7 @@ function flatten_files(infiles) {
                 }
             } catch( err ) {}
         });
+
     return outfiles;
 }
 
